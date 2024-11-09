@@ -79,7 +79,6 @@ const Home = () => {
   const [cardDetails, setCardDetails] = useState<string[]>([]);
   const [binInput, setBinInput] = useState<string>(""); // Used for input BIN number
   const [expiryInput, setExpiryInput] = useState<string>(""); // Used if not random expiry
-  const [outputFormat, setOutputFormat] = useState<string>("json");
   const [cardsToGenerate, setCardsToGenerate] = useState<number>(1);
   const [useRandomExpiry, setUseRandomExpiry] = useState<boolean>(true);
   const [cardType, setCardType] = useState<string>("visa");
@@ -106,7 +105,7 @@ const Home = () => {
         bin: binPrefix,
       };
 
-      const formattedCard = formatCardData(cardData, outputFormat);
+      const formattedCard = formatCardData(cardData, "json"); // Directly using "json" or the desired format
       generatedCards.push(formattedCard);
     }
 
@@ -121,7 +120,7 @@ const Home = () => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `credit_card_details.${outputFormat}`;
+      link.download = `credit_card_details.json`; // Default to JSON export
       link.click();
     }
   };
@@ -138,29 +137,9 @@ const Home = () => {
     <div className="bg-gradient-to-r from-pink-500 via-blue-500 to-teal-500 animate-background min-h-screen flex flex-col items-center text-white py-10">
       <h1 className="text-4xl font-bold mb-8">Random Credit Card Generator</h1>
 
-      {/* About Section */}
+      {/* Card Generation UI */}
       <div className="max-w-2xl mx-auto bg-white text-black p-6 rounded-lg shadow-lg mb-8">
-        <h2 className="text-3xl flex items-center gap-2"><FaInfoCircle /> About</h2>
-        <p className="mt-4">
-          This tool generates random credit card details for testing purposes only. It includes the card number, CVV, and expiry date.
-          <br />
-          Please note, the generated data is not real and cannot be used for actual transactions.
-        </p>
-      </div>
-
-      {/* Features Section */}
-      <div className="max-w-2xl mx-auto bg-white text-black p-6 rounded-lg shadow-lg mb-8">
-        <h2 className="text-3xl flex items-center gap-2"><FaCreditCard /> Features</h2>
-        <ul className="list-inside list-disc mt-4">
-          <li><FaCreditCard /> Generate valid-looking credit card numbers based on card types (Visa, MasterCard, etc.).</li>
-          <li><FaCreditCard /> Random or custom expiry date generation.</li>
-          <li><FaCreditCard /> Export generated cards in PIEP, CSV, or JSON formats.</li>
-          <li><FaCreditCard /> Download all generated cards in your selected format.</li>
-        </ul>
-      </div>
-
-      {/* Input Fields */}
-      <div className="max-w-2xl mx-auto mb-8">
+        <h2 className="text-3xl font-bold mb-4">Generate Credit Cards</h2>
         <div className="flex gap-2 mb-4">
           <select
             value={cardType}
@@ -237,7 +216,7 @@ const Home = () => {
           onClick={handleExport}
           className="p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
         >
-          Export to {outputFormat.toUpperCase()}
+          Export to JSON
         </button>
         <button
           onClick={handleCopyAll}
