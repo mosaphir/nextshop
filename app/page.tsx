@@ -64,6 +64,8 @@ const cardTypes = {
   discover: "6", // Discover cards start with 6011, 622126-622925, etc.
 };
 
+type CardType = keyof typeof cardTypes; // Explicitly type cardType as a key of cardTypes
+
 const formatCardData = (data: { cardNumber: string; cvv: number; expiry: string; bin: string }, format: string): string => {
   if (format === "piep") {
     return `${data.cardNumber}|${data.expiry.split("/")[0]}|${data.expiry.split("/")[1]}|${data.cvv}`;
@@ -81,7 +83,7 @@ const Home = () => {
   const [expiryInput, setExpiryInput] = useState<string>(""); // Used if not random expiry
   const [cardsToGenerate, setCardsToGenerate] = useState<number>(1);
   const [useRandomExpiry, setUseRandomExpiry] = useState<boolean>(true);
-  const [cardType, setCardType] = useState<string>("visa");
+  const [cardType, setCardType] = useState<CardType>("visa"); // Now typed as CardType
 
   // Handle card generation logic
   const handleGenerate = () => {
@@ -130,7 +132,7 @@ const Home = () => {
         <div className="flex gap-2 mb-4">
           <select
             value={cardType}
-            onChange={(e) => setCardType(e.target.value)}
+            onChange={(e) => setCardType(e.target.value as CardType)} // Type assertion here
             className="p-3 text-black rounded-lg border border-gray-300 w-1/2"
           >
             <option value="visa">Visa</option>
