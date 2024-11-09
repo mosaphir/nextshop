@@ -87,9 +87,10 @@ const Home = () => {
   // Handle card generation logic
   const handleGenerate = () => {
     const generatedCards: string[] = [];
-    const binPrefix = cardTypes[cardType];
+    const binPrefix = binInput || cardTypes[cardType]; // Use BIN input or default to selected card type
+
     if (!binPrefix) {
-      alert("Please select a valid card type!");
+      alert("Please enter a valid BIN prefix!");
       return;
     }
 
@@ -151,7 +152,7 @@ const Home = () => {
       <div className="max-w-2xl mx-auto bg-white text-black p-6 rounded-lg shadow-lg mb-8">
         <h2 className="text-3xl flex items-center gap-2"><FaCreditCard /> Features</h2>
         <ul className="list-inside list-disc mt-4">
-          <li><FaCreditCard /> Generate valid-looking credit card numbers based on card types (Visa, Mastercard, etc.).</li>
+          <li><FaCreditCard /> Generate valid-looking credit card numbers based on card types (Visa, MasterCard, etc.).</li>
           <li><FaCreditCard /> Random or custom expiry date generation.</li>
           <li><FaCreditCard /> Export generated cards in PIEP, CSV, or JSON formats.</li>
           <li><FaCreditCard /> Download all generated cards in your selected format.</li>
@@ -173,49 +174,46 @@ const Home = () => {
           </select>
 
           <input
+            type="text"
+            placeholder="Enter BIN prefix"
+            value={binInput}
+            onChange={(e) => setBinInput(e.target.value)}
+            className="p-3 text-black rounded-lg border border-gray-300 w-1/2"
+          />
+        </div>
+
+        <div className="flex gap-2 mb-4">
+          <input
             type="number"
             value={cardsToGenerate}
             onChange={(e) => setCardsToGenerate(Number(e.target.value))}
-            placeholder="How many cards?"
+            className="p-3 text-black rounded-lg border border-gray-300 w-1/2"
             min={1}
-            className="p-3 mb-4 w-1/2 text-black rounded-lg border border-gray-300"
           />
-        </div>
-        
-        <input
-          type="text"
-          placeholder="Expiry Date (MM/YY, leave blank for random)"
-          value={expiryInput}
-          onChange={(e) => setExpiryInput(e.target.value)}
-          className="p-3 mb-4 w-full text-black rounded-lg border border-gray-300"
-        />
-        
-        <div className="flex items-center gap-2 mb-4">
           <input
-            type="checkbox"
-            checked={useRandomExpiry}
-            onChange={() => setUseRandomExpiry(!useRandomExpiry)}
-            className="h-5 w-5"
+            type="text"
+            value={expiryInput}
+            onChange={(e) => setExpiryInput(e.target.value)}
+            placeholder="Expiry MM/YY"
+            className="p-3 text-black rounded-lg border border-gray-300 w-1/2"
           />
-          <label>Use random expiry date</label>
         </div>
 
         <div className="flex justify-between mb-4">
-          <select
-            value={outputFormat}
-            onChange={(e) => setOutputFormat(e.target.value)}
-            className="p-3 text-black rounded-lg border border-gray-300 w-1/2"
-          >
-            <option value="json">JSON</option>
-            <option value="csv">CSV</option>
-            <option value="piep">PIEP</option>
-          </select>
-
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={useRandomExpiry}
+              onChange={() => setUseRandomExpiry(!useRandomExpiry)}
+              className="h-5 w-5"
+            />
+            Use Random Expiry Date
+          </label>
           <button
             onClick={handleGenerate}
             className="p-3 bg-blue-600 text-white rounded-lg w-1/3 hover:bg-blue-700 transition"
           >
-            Generate
+            Generate Cards
           </button>
         </div>
       </div>
@@ -233,6 +231,7 @@ const Home = () => {
         </div>
       )}
 
+      {/* Export Buttons */}
       <div className="mb-8">
         <button
           onClick={handleExport}
