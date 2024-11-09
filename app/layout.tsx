@@ -1,13 +1,13 @@
 import React from "react";
-import Link from "next/link";
-import { FaCreditCard, FaHome, FaQuestionCircle } from "react-icons/fa";
 import Head from "next/head";
+import { FaCreditCard, FaHome, FaQuestionCircle } from "react-icons/fa";
+import Link from "next/link";
 import "./globals.css";
 
 type LayoutProps = {
   children: React.ReactNode;
-  pageTitle?: string; // Optionally accept a custom page title
-  pageDescription?: string; // Optionally accept a custom page description
+  pageTitle?: string;
+  pageDescription?: string;
 };
 
 const Layout = ({
