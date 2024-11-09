@@ -9,8 +9,25 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        // Custom color palette (optional)
+        primary: "#1E3A8A", // Blue
+        secondary: "#EF4444", // Red
+      },
+      animation: {
+        background: "background 15s ease infinite", // Custom background animation
+      },
+      keyframes: {
+        background: {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
+      },
+      fontFamily: {
+        sans: ['"Inter"', 'sans-serif'],
+      },
+      spacing: {
+        '18': '4.5rem', // Custom spacing (example)
       },
     },
   },
