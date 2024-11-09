@@ -1,20 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { FaCreditCard, FaQuestionCircle, FaInfoCircle } from "react-icons/fa"; // Import icons from react-icons
+import { FaCreditCard, FaQuestionCircle, FaInfoCircle, FaClipboard } from "react-icons/fa"; // Import icons from react-icons
 
 // Function to generate random integer in a given range
 const getRandomInt = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
-// Function to generate a credit card number with a given BIN
-const generateCreditCardNumber = (bin: string): string => {
+// Function to generate a credit card number using the Luhn algorithm
+const generateCardNumber = (bin: string): string => {
   let cardNumber = bin;
+  
+  // Generate the rest of the number
   while (cardNumber.length < 15) {
     cardNumber += getRandomInt(0, 9);
   }
 
-  // Luhn algorithm to generate valid card number
+  // Luhn algorithm to generate a valid card number
   const luhnChecksum = (number: string): number => {
     let sum = 0;
     let shouldDouble = false;
@@ -54,7 +56,14 @@ const generateExpiryDate = (useRandom: boolean, expiryInput: string): string => 
   }
 };
 
-// Function to format the card data into different formats (PIEP, JSON, CSV)
+// Define BIN ranges for different card types
+const cardTypes = {
+  visa: "4",
+  mastercard: "5",
+  amex: "34", // AMEX cards typically start with 34 or 37
+  discover: "6", // Discover cards start with 6011, 622126-622925, etc.
+};
+
 const formatCardData = (data: { cardNumber: string; cvv: number; expiry: string; bin: string }, format: string): string => {
   if (format === "piep") {
     return `${data.cardNumber}|${data.expiry.split("/")[0]}|${data.expiry.split("/")[1]}|${data.cvv}`;
@@ -68,29 +77,32 @@ const formatCardData = (data: { cardNumber: string; cvv: number; expiry: string;
 
 const Home = () => {
   const [cardDetails, setCardDetails] = useState<string[]>([]);
-  const [binInput, setBinInput] = useState<string>("");
+  const [binInput, setBinInput] = useState<string>(""); // Used for input BIN number
   const [expiryInput, setExpiryInput] = useState<string>(""); // Used if not random expiry
   const [outputFormat, setOutputFormat] = useState<string>("json");
   const [cardsToGenerate, setCardsToGenerate] = useState<number>(1);
   const [useRandomExpiry, setUseRandomExpiry] = useState<boolean>(true);
+  const [cardType, setCardType] = useState<string>("visa");
 
   // Handle card generation logic
   const handleGenerate = () => {
-    if (!binInput) {
-      alert("Please enter a BIN number!");
+    const generatedCards: string[] = [];
+    const binPrefix = cardTypes[cardType];
+    if (!binPrefix) {
+      alert("Please select a valid card type!");
       return;
     }
 
-    const generatedCards: string[] = [];
     for (let i = 0; i < cardsToGenerate; i++) {
-      const cardNumber = generateCreditCardNumber(binInput);
+      // Generate a valid card number based on the selected BIN prefix
+      const cardNumber = generateCardNumber(binPrefix);
       const cvv = generateCvv();
       const expiry = generateExpiryDate(useRandomExpiry, expiryInput);
       const cardData = {
         cardNumber,
         cvv,
         expiry,
-        bin: binInput,
+        bin: binPrefix,
       };
 
       const formattedCard = formatCardData(cardData, outputFormat);
@@ -113,6 +125,14 @@ const Home = () => {
     }
   };
 
+  // Copy all cards to clipboard
+  const handleCopyAll = () => {
+    if (cardDetails.length > 0) {
+      navigator.clipboard.writeText(cardDetails.join("\n"));
+      alert("Card details copied to clipboard!");
+    }
+  };
+
   return (
     <div className="bg-gradient-to-r from-pink-500 via-blue-500 to-teal-500 animate-background min-h-screen flex flex-col items-center text-white py-10">
       <h1 className="text-4xl font-bold mb-8">Random Credit Card Generator</h1>
@@ -131,48 +151,37 @@ const Home = () => {
       <div className="max-w-2xl mx-auto bg-white text-black p-6 rounded-lg shadow-lg mb-8">
         <h2 className="text-3xl flex items-center gap-2"><FaCreditCard /> Features</h2>
         <ul className="list-inside list-disc mt-4">
-          <li><FaCreditCard /> Generate valid-looking credit card numbers with a user-defined BIN.</li>
+          <li><FaCreditCard /> Generate valid-looking credit card numbers based on card types (Visa, Mastercard, etc.).</li>
           <li><FaCreditCard /> Random or custom expiry date generation.</li>
           <li><FaCreditCard /> Export generated cards in PIEP, CSV, or JSON formats.</li>
           <li><FaCreditCard /> Download all generated cards in your selected format.</li>
         </ul>
       </div>
 
-      {/* FAQ Section */}
-      <div className="max-w-2xl mx-auto bg-white text-black p-6 rounded-lg shadow-lg mb-8">
-        <h2 className="text-3xl flex items-center gap-2"><FaQuestionCircle /> FAQ</h2>
-        <div className="mt-4">
-          <strong>Q: What is a BIN?</strong>
-          <p>A BIN (Bank Identification Number) is the first 6 digits of a credit card number that identifies the card issuer.</p>
-        </div>
-        <div className="mt-4">
-          <strong>Q: Is this tool for real credit cards?</strong>
-          <p>No, this tool is for generating random credit card numbers for testing purposes only.</p>
-        </div>
-        <div className="mt-4">
-          <strong>Q: Can I use these generated numbers for transactions?</strong>
-          <p>No, these numbers are fake and cannot be used for real-world transactions.</p>
-        </div>
-      </div>
-
       {/* Input Fields */}
       <div className="max-w-2xl mx-auto mb-8">
-        <input
-          type="text"
-          placeholder="Enter BIN (6 digits)"
-          value={binInput}
-          onChange={(e) => setBinInput(e.target.value)}
-          maxLength={6}
-          className="p-3 mb-4 w-full text-black rounded-lg border border-gray-300"
-        />
-        <input
-          type="number"
-          value={cardsToGenerate}
-          onChange={(e) => setCardsToGenerate(Number(e.target.value))}
-          placeholder="How many cards?"
-          min={1}
-          className="p-3 mb-4 w-full text-black rounded-lg border border-gray-300"
-        />
+        <div className="flex gap-2 mb-4">
+          <select
+            value={cardType}
+            onChange={(e) => setCardType(e.target.value)}
+            className="p-3 text-black rounded-lg border border-gray-300 w-1/2"
+          >
+            <option value="visa">Visa</option>
+            <option value="mastercard">MasterCard</option>
+            <option value="amex">AMEX</option>
+            <option value="discover">Discover</option>
+          </select>
+
+          <input
+            type="number"
+            value={cardsToGenerate}
+            onChange={(e) => setCardsToGenerate(Number(e.target.value))}
+            placeholder="How many cards?"
+            min={1}
+            className="p-3 mb-4 w-1/2 text-black rounded-lg border border-gray-300"
+          />
+        </div>
+        
         <input
           type="text"
           placeholder="Expiry Date (MM/YY, leave blank for random)"
@@ -180,6 +189,7 @@ const Home = () => {
           onChange={(e) => setExpiryInput(e.target.value)}
           className="p-3 mb-4 w-full text-black rounded-lg border border-gray-300"
         />
+        
         <div className="flex items-center gap-2 mb-4">
           <input
             type="checkbox"
@@ -210,7 +220,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Display Generated Cards */}
+      {/* Generated Cards */}
       {cardDetails.length > 0 && (
         <div className="max-w-2xl mx-auto bg-white text-black p-6 rounded-lg shadow-lg mb-8">
           <textarea
@@ -230,6 +240,22 @@ const Home = () => {
         >
           Export to {outputFormat.toUpperCase()}
         </button>
+        <button
+          onClick={handleCopyAll}
+          className="ml-4 p-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition"
+        >
+          <FaClipboard /> Copy All
+        </button>
+      </div>
+
+      {/* FAQ Section */}
+      <div className="max-w-2xl mx-auto bg-white text-black p-6 rounded-lg shadow-lg mb-8">
+        <h2 className="text-3xl flex items-center gap-2"><FaQuestionCircle /> FAQ</h2>
+        <ul className="list-inside list-disc mt-4">
+          <li><strong>Can I use these generated cards for real transactions?</strong> No, these cards are purely for testing purposes.</li>
+          <li><strong>What is the Luhn algorithm?</strong> It's a checksum used to validate various identification numbers, including credit card numbers.</li>
+          <li><strong>Can I export the data?</strong> Yes, you can export the generated cards in JSON, CSV, or PIEP formats.</li>
+        </ul>
       </div>
     </div>
   );
