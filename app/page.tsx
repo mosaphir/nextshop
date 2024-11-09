@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FaCreditCard, FaQuestionCircle, FaClipboard } from "react-icons/fa"; // Importing the icons
+import { FaCreditCard, FaQuestionCircle, FaClipboard, FaInfoCircle } from "react-icons/fa"; // Add FaInfoCircle here
 
 // Function to generate random integer in a given range
 const getRandomInt = (min: number, max: number): number =>
