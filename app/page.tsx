@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FaCreditCard, FaQuestionCircle, FaClipboard, FaInfoCircle } from "react-icons/fa"; // Add FaInfoCircle here
+import { FaCreditCard, FaClipboard, FaQuestionCircle, FaInfoCircle, FaCheckCircle, FaTimesCircle, FaRandom } from "react-icons/fa";
 
 // Function to generate random integer in a given range
 const getRandomInt = (min: number, max: number): number =>
@@ -10,7 +10,7 @@ const getRandomInt = (min: number, max: number): number =>
 // Function to generate a credit card number using the Luhn algorithm
 const generateCardNumber = (bin: string): string => {
   let cardNumber = bin;
-  
+
   // Generate the rest of the number
   while (cardNumber.length < 15) {
     cardNumber += getRandomInt(0, 9);
@@ -112,19 +112,6 @@ const Home = () => {
     setCardDetails(generatedCards);
   };
 
-  // Handle export functionality
-  const handleExport = () => {
-    if (cardDetails.length > 0) {
-      const formattedData = cardDetails.join("\n");
-      const blob = new Blob([formattedData], { type: "text/plain" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `credit_card_details.json`; // Default to JSON export
-      link.click();
-    }
-  };
-
   // Copy all cards to clipboard
   const handleCopyAll = () => {
     if (cardDetails.length > 0) {
@@ -135,11 +122,11 @@ const Home = () => {
 
   return (
     <div className="bg-gradient-to-r from-pink-500 via-blue-500 to-teal-500 animate-background min-h-screen flex flex-col items-center text-white py-10">
-      <h1 className="text-4xl font-bold mb-8">Random Credit Card Generator <FaCreditCard /></h1>
+      <h1 className="text-4xl font-bold mb-8 flex items-center gap-2">Random Credit Card Generator <FaCreditCard /></h1>
 
       {/* Card Generation UI */}
       <div className="max-w-2xl mx-auto bg-white text-black p-6 rounded-lg shadow-lg mb-8">
-        <h2 className="text-3xl font-bold mb-4">Generate Credit Cards <FaInfoCircle /></h2>
+        <h2 className="text-3xl font-bold mb-4 flex items-center gap-2">Generate Credit Cards <FaInfoCircle /></h2>
         <div className="flex gap-2 mb-4">
           <select
             value={cardType}
@@ -178,21 +165,21 @@ const Home = () => {
           />
         </div>
 
-        <div className="flex justify-between mb-4">
+        <div className="flex justify-between mb-4 items-center">
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={useRandomExpiry}
               onChange={() => setUseRandomExpiry(!useRandomExpiry)}
-              className="h-5 w-5"
+              className="h-5 w-5 text-blue-500"
             />
             Use Random Expiry Date
           </label>
           <button
             onClick={handleGenerate}
-            className="p-3 bg-blue-600 text-white rounded-lg w-1/3 hover:bg-blue-700 transition"
+            className="p-3 bg-blue-600 text-white rounded-lg w-1/3 hover:bg-blue-700 transition flex items-center gap-2"
           >
-            Generate Cards
+            <FaRandom /> Generate Cards
           </button>
         </div>
       </div>
@@ -200,7 +187,7 @@ const Home = () => {
       {/* Generated Cards */}
       {cardDetails.length > 0 && (
         <div className="max-w-2xl mx-auto bg-white text-black p-6 rounded-lg shadow-lg mb-8">
-          <h2 className="text-3xl font-bold mb-4">Generated Cards</h2>
+          <h2 className="text-3xl font-bold mb-4">Generated Cards <FaCheckCircle /></h2>
           <textarea
             value={cardDetails.join("\n")}
             readOnly
@@ -210,14 +197,8 @@ const Home = () => {
 
           <div className="mb-8">
             <button
-              onClick={handleExport}
-              className="p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-            >
-              Export to JSON
-            </button>
-            <button
               onClick={handleCopyAll}
-              className="ml-4 p-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition"
+              className="p-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition flex items-center gap-2"
             >
               <FaClipboard /> Copy All
             </button>
@@ -229,9 +210,9 @@ const Home = () => {
       <div className="max-w-2xl mx-auto bg-white text-black p-6 rounded-lg shadow-lg mb-8">
         <h2 className="text-3xl flex items-center gap-2"><FaQuestionCircle /> FAQ</h2>
         <ul className="list-inside list-disc mt-4">
-          <li><strong>Can I use these generated cards for real transactions?</strong> No, these cards are purely for testing purposes.</li>
-          <li><strong>What is the Luhn algorithm?</strong> It's a checksum used to validate various identification numbers, including credit card numbers.</li>
-          <li><strong>Can I export the data?</strong> Yes, you can export the generated cards in JSON, CSV, or PIEP formats.</li>
+          <li><strong>What is this tool?</strong> This tool generates random credit card details based on a BIN prefix.</li>
+          <li><strong>Can I use the generated cards?</strong> These cards are not real and cannot be used for transactions.</li>
+          <li><strong>Can I export the data?</strong> No export feature currently. You can only copy the generated cards.</li>
         </ul>
       </div>
     </div>
