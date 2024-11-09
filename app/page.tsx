@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FaCreditCard, FaQuestionCircle, FaInfoCircle, FaClipboard } from "react-icons/fa"; // Import icons from react-icons
+import { FaCreditCard, FaQuestionCircle, FaClipboard } from "react-icons/fa"; // Importing the icons
 
 // Function to generate random integer in a given range
 const getRandomInt = (min: number, max: number): number =>
@@ -135,11 +135,11 @@ const Home = () => {
 
   return (
     <div className="bg-gradient-to-r from-pink-500 via-blue-500 to-teal-500 animate-background min-h-screen flex flex-col items-center text-white py-10">
-      <h1 className="text-4xl font-bold mb-8">Random Credit Card Generator</h1>
+      <h1 className="text-4xl font-bold mb-8">Random Credit Card Generator <FaCreditCard /></h1>
 
       {/* Card Generation UI */}
       <div className="max-w-2xl mx-auto bg-white text-black p-6 rounded-lg shadow-lg mb-8">
-        <h2 className="text-3xl font-bold mb-4">Generate Credit Cards</h2>
+        <h2 className="text-3xl font-bold mb-4">Generate Credit Cards <FaInfoCircle /></h2>
         <div className="flex gap-2 mb-4">
           <select
             value={cardType}
@@ -200,31 +200,30 @@ const Home = () => {
       {/* Generated Cards */}
       {cardDetails.length > 0 && (
         <div className="max-w-2xl mx-auto bg-white text-black p-6 rounded-lg shadow-lg mb-8">
+          <h2 className="text-3xl font-bold mb-4">Generated Cards</h2>
           <textarea
-            rows={10}
-            cols={50}
-            readOnly
             value={cardDetails.join("\n")}
-            className="w-full text-black p-3 border border-gray-300 rounded-lg"
-          />
+            readOnly
+            rows={10}
+            className="w-full p-4 text-black rounded-lg border border-gray-300 mb-4"
+          ></textarea>
+
+          <div className="mb-8">
+            <button
+              onClick={handleExport}
+              className="p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+            >
+              Export to JSON
+            </button>
+            <button
+              onClick={handleCopyAll}
+              className="ml-4 p-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition"
+            >
+              <FaClipboard /> Copy All
+            </button>
+          </div>
         </div>
       )}
-
-      {/* Export Buttons */}
-      <div className="mb-8">
-        <button
-          onClick={handleExport}
-          className="p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-        >
-          Export to JSON
-        </button>
-        <button
-          onClick={handleCopyAll}
-          className="ml-4 p-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition"
-        >
-          <FaClipboard /> Copy All
-        </button>
-      </div>
 
       {/* FAQ Section */}
       <div className="max-w-2xl mx-auto bg-white text-black p-6 rounded-lg shadow-lg mb-8">
