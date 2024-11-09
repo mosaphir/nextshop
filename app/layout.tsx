@@ -57,17 +57,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
-      >
-        {/* Main Layout Container */}
-        <div className="container mx-auto px-4 py-8">
-          {/* Grid layout with responsive columns */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            
-            {/* Children content will be dynamically injected here */}
-            {children}
-
-          </div>
-        </div>
+      >{children}
       </body>
     </html>
   );
